@@ -1,6 +1,6 @@
 /* styles.css */
 
-/* 重置和基础样式 */
+/* Reset and base styles */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -20,30 +20,32 @@ body {
 }
 
 .container {
-    background-color: rgba(255, 255, 255, 0.79); /* 背景色 */
+    background-color: rgba(255, 255, 255, 0.79);
+    /* Background color */
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.3); /* 阴影 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Shadow */
     text-align: center;
     max-width: 600px;
     width: 100%;
 }
 
-/* 标题样式 */
+/* Title styles */
 h1 {
     color: #007b7b;
     margin-bottom: 1rem;
     font-size: 1.8rem;
 }
 
-/* 图片样式 */
-.logo {
+/* Image styles */
+img {
     width: 100px;
     height: 100px;
     margin-bottom: 1rem;
 }
 
-/* 表单样式 */
+/* Form styles */
 #downloadForm {
     display: flex;
     flex-direction: column;
@@ -90,8 +92,8 @@ h1 {
     cursor: not-allowed;
 }
 
-/* 加载指示器样式 */
-#loader {
+/* Loading indicator styles */
+#loadingIndicator {
     border: 4px solid #f3f3f3;
     border-top: 4px solid #007b7b;
     border-radius: 50%;
@@ -99,6 +101,7 @@ h1 {
     height: 40px;
     animation: spin 1s linear infinite;
     margin: 1rem auto;
+    display: none;
 }
 
 @keyframes spin {
@@ -111,20 +114,22 @@ h1 {
     }
 }
 
-/* 错误信息样式 */
+/* Error message styles */
 #errorMessage {
     color: #ff0000;
     margin-top: 1rem;
     font-size: 0.9rem;
+    display: none;
 }
 
-/* 进度条样式 */
+/* Progress bar styles */
 #progressBarContainer {
     width: 100%;
     background-color: #e0e0e0;
     border-radius: 25px;
     margin-top: 1rem;
     overflow: hidden;
+    display: none;
 }
 
 #progressBar {
@@ -139,19 +144,29 @@ h1 {
     transition: width 0.3s ease;
 }
 
-/* 下载计数显示样式 */
+/* Download count display styles */
 #downloadCountDisplay {
     margin-top: 1rem;
     font-size: 0.9rem;
     color: #666;
 }
 
-/* 通用工具类 */
+/* Utility classes */
 .hidden {
     display: none !important;
 }
 
-/* 响应式设计 */
+/* Fade-out effect */
+.fade-out {
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+.fade-out.hidden {
+    opacity: 0;
+}
+
+/* Responsive design */
 @media (max-width: 600px) {
     .container {
         padding: 1.5rem;
