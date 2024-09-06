@@ -58,6 +58,11 @@ export class DownloadManager {
 
                 // 记录详细的错误信息
                 this.logError(error, url, retryCount);
+
+                if (retryCount < CONFIG.MAX_RETRIES) { // 如果重试次数小于最大重试次数
+                    retryCount++; // 增加重试次数
+                    attemptDownload(); // 重新尝试下载
+                }
             } finally {
                 this.hideLoader(); // 隐藏加载器
                 this.resetProgressBar(); // 重置进度条

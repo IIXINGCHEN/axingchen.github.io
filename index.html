@@ -88,7 +88,15 @@
                     if (error.name === 'AbortError') {
                         console.warn('Download aborted');
                     } else if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+                        console.error('Fetch failed:', error);
                         this.downloadManager.showError(MESSAGES.ERROR_FETCH_FAILED);
+                        // 重试机制示例
+                        try {
+                            await this.downloadManager.handleDownloadRequest(url);
+                        } catch (retryError) {
+                            console.error('Retry failed:', retryError);
+                            this.downloadManager.showError(MESSAGES.ERROR_RETRY_FAILED);
+                        }
                     } else {
                         console.error('Download error:', error);
                         this.downloadManager.showError(MESSAGES.ERROR_UNKNOWN);
