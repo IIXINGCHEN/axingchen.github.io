@@ -1,3 +1,4 @@
+// app.js
 import { MESSAGES } from './config.js';
 import * as Utils from './utils.js';
 import { DownloadManager } from './downloadManager.js';

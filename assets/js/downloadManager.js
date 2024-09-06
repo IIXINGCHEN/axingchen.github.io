@@ -1,3 +1,4 @@
+// downloadManager.js
 import { CONFIG, MESSAGES } from './config.js';
 import * as Utils from './utils.js';
 
