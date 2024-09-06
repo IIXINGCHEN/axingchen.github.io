@@ -1,4 +1,3 @@
-// utils.js
 import { CONFIG, MESSAGES } from './config.js';
 
 export function debounce(func, delayMs) {

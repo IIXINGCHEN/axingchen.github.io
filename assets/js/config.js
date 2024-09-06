@@ -1,4 +1,3 @@
-// config.js
 export const CONFIG = {
     MAX_RETRIES: 3,
     DOWNLOAD_TIMEOUT_MS: 120000, // 增加超时时间到 2 分钟

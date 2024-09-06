@@ -1,4 +1,3 @@
-// downloadManager.js
 import { CONFIG, MESSAGES } from './config.js';
 import * as Utils from './utils.js';
 
@@ -9,58 +8,58 @@ export class DownloadManager {
         this.downloadTimeout = null;
     }
 
-   async handleDownloadRequest(url) {
-    this.showLoader();
-    this.hideError();
-    this.resetProgressBar();
+    async handleDownloadRequest(url) {
+        this.showLoader();
+        this.hideError();
+        this.resetProgressBar();
 
-    let retryCount = 0;
-    const attemptDownload = async () => {
-        if (this.downloadTimeout) {
-            clearTimeout(this.downloadTimeout);
-        }
-
-        this.downloadTimeout = setTimeout(() => {
-            this.hideLoader();
-            if (retryCount < CONFIG.MAX_RETRIES) {
-                retryCount++;
-                attemptDownload();
-            } else {
-                this.showError(MESSAGES.ERROR_DOWNLOAD_TIMEOUT);
-            }
-        }, CONFIG.DOWNLOAD_TIMEOUT_MS);
-
-        try {
-            const response = await fetch(url, { method: 'GET' });
-
-            if (!response.ok) {
-                console.error(`Download failed with status: ${response.status}`);
-                throw new Error(`${MESSAGES.ERROR_NETWORK} (${response.status})`);
+        let retryCount = 0;
+        const attemptDownload = async () => {
+            if (this.downloadTimeout) {
+                clearTimeout(this.downloadTimeout);
             }
 
-            const contentLength = parseInt(response.headers.get('Content-Length'), 10) || 0;
+            this.downloadTimeout = setTimeout(() => {
+                this.hideLoader();
+                if (retryCount < CONFIG.MAX_RETRIES) {
+                    retryCount++;
+                    attemptDownload();
+                } else {
+                    this.showError(MESSAGES.ERROR_DOWNLOAD_TIMEOUT);
+                }
+            }, CONFIG.DOWNLOAD_TIMEOUT_MS);
 
-            if (contentLength > CONFIG.MAX_FILE_SIZE_BYTES) {
-                throw new Error(MESSAGES.ERROR_FILE_TOO_LARGE);
+            try {
+                const response = await fetch(url, { method: 'GET' });
+
+                if (!response.ok) {
+                    console.error(`Download failed with status: ${response.status}`);
+                    throw new Error(`${MESSAGES.ERROR_NETWORK} (${response.status})`);
+                }
+
+                const contentLength = parseInt(response.headers.get('Content-Length'), 10) || 0;
+
+                if (contentLength > CONFIG.MAX_FILE_SIZE_BYTES) {
+                    throw new Error(MESSAGES.ERROR_FILE_TOO_LARGE);
+                }
+
+                const blob = await this.streamResponse(response, contentLength);
+                clearTimeout(this.downloadTimeout);
+                const fileName = Utils.getFilenameFromUrl(url);
+                this.handleDownload({ blob, fileName });
+                this.updateDownloadCount();
+            } catch (error) {
+                clearTimeout(this.downloadTimeout);
+                this.showError(error.message || MESSAGES.ERROR_DOWNLOAD_FAILED);
+                console.error('Download error:', error);
+            } finally {
+                this.hideLoader();
+                this.resetProgressBar();
             }
+        };
 
-            const blob = await this.streamResponse(response, contentLength);
-            clearTimeout(this.downloadTimeout);
-            const fileName = Utils.getFilenameFromUrl(url);
-            this.handleDownload({ blob, fileName });
-            this.updateDownloadCount();
-        } catch (error) {
-            clearTimeout(this.downloadTimeout);
-            this.showError(error.message || MESSAGES.ERROR_DOWNLOAD_FAILED);
-            console.error('Download error:', error);
-        } finally {
-            this.hideLoader();
-            this.resetProgressBar();
-        }
-    };
-
-    await attemptDownload();
-}
+        await attemptDownload();
+    }
 
     async streamResponse(response, contentLength) {
         const reader = response.body.getReader();
