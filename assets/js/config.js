@@ -3,12 +3,13 @@ export const CONFIG = {
     MAX_RETRIES: 3,
     DOWNLOAD_TIMEOUT_MS: 120000, // 增加超时时间到 2 分钟
     MAX_FILE_SIZE_BYTES: 1024 * 1024 * 1024, // 1GB
-    VALID_URL_REGEX: /^https:\/\/(github\.com|gist\.githubusercontent\.com)\/([\w-]+)\/([\w-]+)(\/blob|\/archive|\/releases\/download|\/raw)\/([\w\.-]+)(\/[\w\.-]+)?(\?.*)?$/, // 更新正则表达式以支持更多 URL 模式
+    VALID_URL_REGEX: /^https:\/\/(github\.com|gist\.githubusercontent\.com)\/([\w-]+)\/([\w-]+)(\/releases\/download|\/archive\/refs\/tags|\/blob|\/raw)\/([\w\.-]+)(\/[\w\.-]+)?(\?.*)?$/, // 更新正则表达式以支持更多 URL 模式
     FILE_TYPES: {
         DOCUMENT: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'],
         IMAGE: ['jpg', 'jpeg', 'png', 'gif'],
         ARCHIVE: ['zip', 'rar', 'tar', 'gz'],
-        CODE: ['js', 'css', 'html', 'json']
+        CODE: ['js', 'css', 'html', 'json'],
+        INSTALLER: ['deb', 'dmg', 'rpm', 'exe', 'sh']
     }
 };
 

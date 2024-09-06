@@ -80,7 +80,7 @@ export class DownloadManager {
     }
 
     handleDownload({ blob, fileName }) {
-        const validMimeTypes = ['application/pdf', 'image/jpeg', 'image/png', 'text/plain', 'application/zip', 'application/x-tar', 'application/gzip']; // 根据实际需求添加更多 MIME 类型
+        const validMimeTypes = ['application/pdf', 'image/jpeg', 'image/png', 'text/plain', 'application/zip', 'application/x-tar', 'application/gzip', 'application/x-debian-package', 'application/x-apple-diskimage', 'application/x-rpm', 'application/x-msdos-program', 'text/x-shellscript']; // 根据实际需求添加更多 MIME 类型
         if (!validMimeTypes.includes(blob.type)) {
             Utils.showNotification(MESSAGES.ERROR_INVALID_FILE_TYPE, 'error');
             return;
