@@ -15,25 +15,30 @@ class GitHubDownloaderApp {
             downloadCountDisplay: document.getElementById('downloadCountDisplay')
         };
 
-        this.downloadManager = new DownloadManager(this.elements);
-        this.initializeEventListeners();
-        this.initializeDownloadCount();
-        Utils.addAccessibility(this.elements);
+        // 确保所有元素都存在后再初始化 downloadManager
+        if (this.elements.downloadForm && this.elements.urlInput && this.elements.loader && this.elements.errorMessage && this.elements.downloadButton && this.elements.progressBar && this.elements.downloadCountDisplay) {
+            this.downloadManager = new DownloadManager(this.elements);
+            this.initializeEventListeners();
+            this.initializeDownloadCount();
+            Utils.addAccessibility(this.elements);
+        } else {
+            console.error('Some elements are missing. Unable to initialize GitHubDownloaderApp.');
+        }
     }
 
     initializeEventListeners() {
         if (this.elements.downloadForm) {
-            this.elements.downloadForm.addEventListener('submit', this.handleSubmit.bind(this));
+            this.elements.downloadForm.addEventListener('submit', this.handleSubmit);
         }
 
         if (this.elements.downloadButton) {
-            this.elements.downloadButton.addEventListener('click', this.handleSubmit.bind(this));
+            this.elements.downloadButton.addEventListener('click', this.handleSubmit);
         }
 
-        window.addEventListener('error', this.handleGlobalError.bind(this));
+        window.addEventListener('error', this.handleGlobalError);
     }
 
-    handleSubmit(event) {
+    handleSubmit = async (event) => {
         event.preventDefault();
         const url = this.elements.urlInput.value.trim();
 
@@ -47,11 +52,23 @@ class GitHubDownloaderApp {
             return;
         }
 
-        this.downloadManager.handleDownloadRequest(url);
+        try {
+            await this.downloadManager.handleDownloadRequest(url);
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                console.warn('Download aborted');
+            } else if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+                this.downloadManager.showError(MESSAGES.ERROR_FETCH_FAILED);
+            } else {
+                console.error('Download error:', error);
+                this.downloadManager.showError(MESSAGES.ERROR_UNKNOWN);
+            }
+        }
     }
 
-    handleGlobalError(event) {
-        console.error('Global error:', event.error);
+    handleGlobalError = (event) => {
+        const error = event.error || new Error('Unknown error');
+        console.error('Global error:', error);
         this.downloadManager.showError(MESSAGES.ERROR_UNKNOWN);
     }
 

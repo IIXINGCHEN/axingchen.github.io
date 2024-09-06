@@ -80,24 +80,27 @@ export class DownloadManager {
     }
 
     handleDownload({ blob, fileName }) {
-        if (blob.type.includes('application/octet-stream')) {
-            alert(MESSAGES.ERROR_INVALID_FILE_TYPE);
+        const validMimeTypes = ['application/pdf', 'image/jpeg', 'image/png', 'text/plain']; // 根据实际需求添加更多 MIME 类型
+        if (!validMimeTypes.includes(blob.type)) {
+            Utils.showNotification(MESSAGES.ERROR_INVALID_FILE_TYPE, 'error');
             return;
         }
 
         if (blob.size > CONFIG.MAX_FILE_SIZE_BYTES) {
-            alert(MESSAGES.ERROR_FILE_TOO_LARGE);
+            Utils.showNotification(MESSAGES.ERROR_FILE_TOO_LARGE, 'error');
             return;
         }
 
         const { element, url } = Utils.createDownloadLink(blob, fileName);
         document.body.appendChild(element);
         element.click();
-        setTimeout(() => {
+
+        (async () => {
+            await new Promise(resolve => setTimeout(resolve, 100));
             document.body.removeChild(element);
             Utils.revokeObjectUrl(url);
-            alert(MESSAGES.SUCCESS_DOWNLOAD_COMPLETE);
-        }, 100);
+            Utils.showNotification(MESSAGES.SUCCESS_DOWNLOAD_COMPLETE, 'success');
+        })();
     }
 
     showLoader() {
