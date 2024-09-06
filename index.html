@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="keywords" content="GitHub,文件,加速,下载">
+    <meta name="author" content="AxingChen">
+    <meta name="description" content="GitHub 文件加速下载">
+    <link rel="icon" href="./assets/images/favicon.ico">
+    <title>GitHub 文件加速下载</title>
+    <link rel="stylesheet" href="./assets/css/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <img src="./assets/images/github.png" width="100" height="100" alt="GitHub 文件加速 Logo"
+            style="margin-bottom: 1rem;">
+        <h1>GitHub Proxy 文件加速</h1>
+        <form id="downloadForm">
+            <input id="urlInput" type="text" placeholder="输入 GitHub 文件链接" required>
+            <button id="submitButton" type="submit">加速下载</button>
+        </form>
+        <div id="loader" class="hidden"></div>
+        <div id="errorMessage" class="hidden"></div>
+        <div id="progressBarContainer" class="hidden">
+            <div id="progressBar"></div>
+        </div>
+        <div id="downloadCountDisplay"></div>
+    </div>
+    <script type="module" src="./assets/js/app.js"></script>
+</body>
+
+</html>
