@@ -63,12 +63,16 @@ function downloadFile(url, loader, errorMessage, progressBarContainer, progressB
             const downloadUrl = URL.createObjectURL(blob);
             window.open(downloadUrl, '_blank');
         } else {
-            handleError('下载失败', loader, errorMessage, progressBarContainer, submitButton);
+            handleError(`下载失败，状态码: ${xhr.status}`, loader, errorMessage, progressBarContainer, submitButton);
         }
     });
 
     xhr.addEventListener('error', () => {
-        handleError('下载失败', loader, errorMessage, progressBarContainer, submitButton);
+        handleError('下载失败，网络错误', loader, errorMessage, progressBarContainer, submitButton);
+    });
+
+    xhr.addEventListener('abort', () => {
+        handleError('下载已取消', loader, errorMessage, progressBarContainer, submitButton);
     });
 
     xhr.send();
