@@ -1,7 +1,7 @@
 document.getElementById('downloadForm').addEventListener('submit', function (event) {
     event.preventDefault();
 
-    const urlInput = document.getElementsByName('url')[0];
+    const urlInput = document.getElementsByName('gh_url');
     const submitButton = document.querySelector('.btn');
     const loader = document.getElementById('loader');
     const errorMessage = document.getElementById('errorMessage');
