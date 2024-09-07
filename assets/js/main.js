@@ -1,4 +1,4 @@
-document.getElementById('downloadForm').addEventListener('submit', function (event) {
+document.getElementById('downloadForm').addEventListener('submit', async function (event) {
     event.preventDefault();
 
     const urlInput = document.getElementsByName('gh_url')[0];
@@ -21,10 +21,28 @@ document.getElementById('downloadForm').addEventListener('submit', function (eve
     progressBarContainer.classList.remove('hidden');
     submitButton.disabled = true;
 
-    const baseUrl = location.href.substr(0, location.href.lastIndexOf('/') + 1);
-    const targetUrl = baseUrl + userInputUrl;
+    try {
+        const response = await fetch(`/proxy?gh_url=${encodeURIComponent(userInputUrl)}`);
+        if (!response.ok) {
+            throw new Error(`下载失败，状态码: ${response.status}`);
+        }
 
-    downloadGitHubFile(targetUrl, loader, errorMessage, progressBarContainer, progressBar, submitButton);
+        const blob = await response.blob();
+        const downloadUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = 'download';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(downloadUrl);
+
+        loader.classList.add('hidden');
+        progressBarContainer.classList.add('hidden');
+        submitButton.disabled = false;
+    } catch (error) {
+        displayErrorMessage(error.message, loader, errorMessage, progressBarContainer, submitButton);
+    }
 });
 
 function isValidGitHubUrl(url) {
@@ -34,56 +52,6 @@ function isValidGitHubUrl(url) {
     } catch (e) {
         return false;
     }
-}
-
-function downloadGitHubFile(url, loader, errorMessage, progressBarContainer, progressBar, submitButton) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.responseType = 'blob';
-
-    xhr.addEventListener('loadstart', () => {
-        progressBar.style.width = '0%';
-    });
-
-    xhr.addEventListener('progress', (event) => {
-        if (event.lengthComputable) {
-            const percentComplete = (event.loaded / event.total) * 100;
-            progressBar.style.width = percentComplete + '%';
-            progressBar.textContent = percentComplete.toFixed(2) + '%';
-        }
-    });
-
-    xhr.addEventListener('load', () => {
-        if (xhr.status === 200) {
-            loader.classList.add('hidden');
-            progressBarContainer.classList.add('hidden');
-            submitButton.disabled = false;
-
-            const blob = new Blob([xhr.response], { type: 'application/octet-stream' });
-            const downloadUrl = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = downloadUrl;
-            link.download = 'download';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(downloadUrl);
-        } else if (xhr.status === 404) {
-            displayErrorMessage('文件未找到，请检查链接是否正确', loader, errorMessage, progressBarContainer, submitButton);
-        } else {
-            displayErrorMessage(`下载失败，状态码: ${xhr.status}`, loader, errorMessage, progressBarContainer, submitButton);
-        }
-    });
-
-    xhr.addEventListener('error', () => {
-        displayErrorMessage('下载失败，网络错误', loader, errorMessage, progressBarContainer, submitButton);
-    });
-
-    xhr.addEventListener('abort', () => {
-        displayErrorMessage('下载已取消', loader, errorMessage, progressBarContainer, submitButton);
-    });
-
-    xhr.send();
 }
 
 function displayErrorMessage(message, loader, errorMessage, progressBarContainer, submitButton) {
