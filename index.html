@@ -17,9 +17,12 @@
     <div class="container">
         <img src="assets/images/github.png" width="100" height="100" alt="GitHub 文件加速 Logo" class="logo">
         <h1>GitHub Proxy 文件加速</h1>
-        <form id="downloadForm">
-            <input id="urlInput" type="text" placeholder="输入 GitHub 文件链接" required>
-            <button id="submitButton" type="submit">加速下载</button>
+        <form id="downloadForm" class="flex">
+            <div class="block">
+                <input class="url" name="url" type="text" placeholder="键入GitHub文件链接" required>
+                <div class="bar"></div>
+            </div>
+            <input class="btn" type="submit" value="下载">
         </form>
         <div id="loader" class="hidden"></div>
         <div id="errorMessage" class="hidden"></div>
@@ -28,7 +31,7 @@
         </div>
         <div id="downloadCountDisplay"></div>
     </div>
-    <script src="assets/js/main.js"></script>
+    <script src="assets/js/script.js"></script>
 </body>
 
 </html>
