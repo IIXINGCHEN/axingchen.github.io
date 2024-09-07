@@ -1,7 +1,7 @@
 document.getElementById('downloadForm').addEventListener('submit', function (event) {
     event.preventDefault();
 
-    const urlInput = document.getElementsByName('gh_url');
+    const urlInput = document.getElementsByName('gh_url')[0];
     const submitButton = document.querySelector('.btn');
     const loader = document.getElementById('loader');
     const errorMessage = document.getElementById('errorMessage');
@@ -10,7 +10,7 @@ document.getElementById('downloadForm').addEventListener('submit', function (eve
 
     const userInputUrl = urlInput.value.trim();
 
-    if (!isValidUrl(userInputUrl)) {
+    if (!isValidGitHubUrl(userInputUrl)) {
         errorMessage.textContent = '请输入有效的GitHub文件链接';
         errorMessage.classList.remove('hidden');
         return;
@@ -24,19 +24,19 @@ document.getElementById('downloadForm').addEventListener('submit', function (eve
     const baseUrl = location.href.substr(0, location.href.lastIndexOf('/') + 1);
     const targetUrl = baseUrl + userInputUrl;
 
-    downloadFile(targetUrl, loader, errorMessage, progressBarContainer, progressBar, submitButton);
+    downloadGitHubFile(targetUrl, loader, errorMessage, progressBarContainer, progressBar, submitButton);
 });
 
-function isValidUrl(url) {
+function isValidGitHubUrl(url) {
     try {
-        new URL(url);
-        return true;
+        const parsedUrl = new URL(url);
+        return parsedUrl.hostname === 'github.com' || parsedUrl.hostname === 'raw.githubusercontent.com';
     } catch (e) {
         return false;
     }
 }
 
-function downloadFile(url, loader, errorMessage, progressBarContainer, progressBar, submitButton) {
+function downloadGitHubFile(url, loader, errorMessage, progressBarContainer, progressBar, submitButton) {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.responseType = 'blob';
@@ -69,24 +69,24 @@ function downloadFile(url, loader, errorMessage, progressBarContainer, progressB
             document.body.removeChild(link);
             URL.revokeObjectURL(downloadUrl);
         } else if (xhr.status === 404) {
-            handleError('文件未找到，请检查链接是否正确', loader, errorMessage, progressBarContainer, submitButton);
+            displayErrorMessage('文件未找到，请检查链接是否正确', loader, errorMessage, progressBarContainer, submitButton);
         } else {
-            handleError(`下载失败，状态码: ${xhr.status}`, loader, errorMessage, progressBarContainer, submitButton);
+            displayErrorMessage(`下载失败，状态码: ${xhr.status}`, loader, errorMessage, progressBarContainer, submitButton);
         }
     });
 
     xhr.addEventListener('error', () => {
-        handleError('下载失败，网络错误', loader, errorMessage, progressBarContainer, submitButton);
+        displayErrorMessage('下载失败，网络错误', loader, errorMessage, progressBarContainer, submitButton);
     });
 
     xhr.addEventListener('abort', () => {
-        handleError('下载已取消', loader, errorMessage, progressBarContainer, submitButton);
+        displayErrorMessage('下载已取消', loader, errorMessage, progressBarContainer, submitButton);
     });
 
     xhr.send();
 }
 
-function handleError(message, loader, errorMessage, progressBarContainer, submitButton) {
+function displayErrorMessage(message, loader, errorMessage, progressBarContainer, submitButton) {
     loader.classList.add('hidden');
     progressBarContainer.classList.add('hidden');
     errorMessage.textContent = message;
