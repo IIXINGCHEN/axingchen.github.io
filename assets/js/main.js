@@ -1,8 +1,8 @@
 document.getElementById('downloadForm').addEventListener('submit', function (event) {
     event.preventDefault();
 
-    const urlInput = document.getElementById('urlInput');
-    const submitButton = document.getElementById('submitButton');
+    const urlInput = document.getElementsByName('url')[0];
+    const submitButton = document.querySelector('.btn');
     const loader = document.getElementById('loader');
     const errorMessage = document.getElementById('errorMessage');
     const progressBarContainer = document.getElementById('progressBarContainer');
