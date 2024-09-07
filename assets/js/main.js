@@ -22,7 +22,13 @@ document.getElementById('downloadForm').addEventListener('submit', async functio
     submitButton.disabled = true;
 
     try {
-        const response = await fetch(`/proxy?gh_url=${encodeURIComponent(userInputUrl)}`);
+        const response = await fetch(`/proxy?gh_url=${encodeURIComponent(userInputUrl)}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/octet-stream'
+            }
+        });
+
         if (!response.ok) {
             throw new Error(`下载失败，状态码: ${response.status}`);
         }
