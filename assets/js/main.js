@@ -61,7 +61,13 @@ function downloadFile(url, loader, errorMessage, progressBarContainer, progressB
 
             const blob = new Blob([xhr.response], { type: 'application/octet-stream' });
             const downloadUrl = URL.createObjectURL(blob);
-            window.open(downloadUrl, '_blank');
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = 'download';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(downloadUrl);
         } else if (xhr.status === 404) {
             handleError('文件未找到，请检查链接是否正确', loader, errorMessage, progressBarContainer, submitButton);
         } else {
